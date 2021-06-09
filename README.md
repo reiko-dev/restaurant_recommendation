@@ -1,2 +1,4 @@
 # restaurant_recommendation
- A implementation of the FriendlyEats codelab from Google team.
+ A custom implementation of the FriendlyEats codelab from Google team.
+ 
+ Original repo url: https://github.com/FirebaseExtended/codelab-friendlyeats-flutter
