@@ -1,7 +1,6 @@
 {
   "hosting": {
-    "predeploy": "flutter clean && flutter build web",
-    "public": "build/web",
+    "public": "(public)",
     "ignore": [
       "firebase.json",
       "**/.*",
