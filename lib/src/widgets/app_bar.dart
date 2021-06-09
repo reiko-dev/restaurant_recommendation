@@ -22,12 +22,12 @@ class RestaurantAppBar extends StatelessWidget {
 
   RestaurantAppBar({
     this.restaurant,
-    CloseRestaurantPressedCallback onClosePressed,
+    CloseRestaurantPressedCallback? onClosePressed,
   }) : _onPressed = onClosePressed;
 
-  final Restaurant restaurant;
+  final Restaurant? restaurant;
 
-  final CloseRestaurantPressedCallback _onPressed;
+  final CloseRestaurantPressedCallback? _onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class RestaurantAppBar extends StatelessWidget {
         title: Wrap(
           children: <Widget>[
             Text(
-              restaurant.name,
+              restaurant!.name!,
               overflow: TextOverflow.ellipsis,
             ),
             Row(
@@ -54,7 +54,7 @@ class RestaurantAppBar extends StatelessWidget {
                   width: 80,
                   alignment: Alignment.bottomLeft,
                   child: StarRating(
-                    rating: restaurant.avgRating,
+                    rating: restaurant!.avgRating,
                     color: Colors.white,
                     size: 16,
                   ),
@@ -62,9 +62,9 @@ class RestaurantAppBar extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 6),
                   child: Text(
-                    '\$' * restaurant.price,
+                    '\$' * restaurant!.price!,
                     style: TextStyle(
-                        fontSize: Theme.of(context).textTheme.caption.fontSize),
+                        fontSize: Theme.of(context).textTheme.caption!.fontSize),
                   ),
                 ),
               ],
@@ -72,9 +72,9 @@ class RestaurantAppBar extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 2),
               child: Text(
-                '${restaurant.category} ● ${restaurant.city}',
+                '${restaurant!.category} ● ${restaurant!.city}',
                 style: TextStyle(
-                    fontSize: Theme.of(context).textTheme.caption.fontSize),
+                    fontSize: Theme.of(context).textTheme.caption!.fontSize),
               ),
             ),
           ],
@@ -83,7 +83,7 @@ class RestaurantAppBar extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             Image.network(
-              restaurant.photo,
+              restaurant!.photo!,
               fit: BoxFit.cover,
             ),
             Container(

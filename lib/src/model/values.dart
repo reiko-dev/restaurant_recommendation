@@ -137,7 +137,7 @@ final _reviewTextPerRating = {
 final random = Random();
 
 String getRandomReviewText(int rating) {
-  final reviews = _reviewTextPerRating[rating];
+  final reviews = _reviewTextPerRating[rating]!;
   return reviews[random.nextInt(reviews.length)];
 }
 

@@ -22,8 +22,8 @@ class EmptyListView extends StatelessWidget {
     this.onPressed,
   });
 
-  final Widget child;
-  final EmptyListActionButtonCallback onPressed;
+  final Widget? child;
+  final EmptyListActionButtonCallback? onPressed;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -43,7 +43,6 @@ class EmptyListView extends StatelessWidget {
               'assets/friendlyeater.png',
             ),
           ),
-          child,
           ElevatedButton(child: Text('ADD SOME'), onPressed: onPressed),
         ],
       ),

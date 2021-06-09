@@ -22,7 +22,7 @@ class StarRating extends StatelessWidget {
     this.size = 24,
   });
 
-  final double rating;
+  final double? rating;
   final double size;
   final Color color;
 
@@ -31,7 +31,7 @@ class StarRating extends StatelessWidget {
     return SmoothStarRating(
       starCount: 5,
       allowHalfRating: true,
-      rating: rating,
+      rating: rating!,
       color: color,
       borderColor: color,
       size: size,

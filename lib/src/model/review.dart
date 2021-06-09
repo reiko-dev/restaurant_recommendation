@@ -20,23 +20,22 @@ import './values.dart';
 
 // This is called "ratings" in the backend.
 class Review {
-  final String id;
-  final String userId;
-  final double rating;
-  final String text;
-  final String userName;
-  final Timestamp timestamp;
+  final String? id;
+  final String? userId;
+  final double? rating;
+  final String? text;
+  final String? userName;
+  final Timestamp? timestamp;
 
-  final DocumentReference reference;
+  final DocumentReference? reference;
 
   Review.fromSnapshot(DocumentSnapshot snapshot)
-      : assert(snapshot != null),
-        id = snapshot.id,
-        rating = snapshot.data()['rating'].toDouble(),
-        text = snapshot.data()['text'],
-        userName = snapshot.data()['userName'],
-        userId = snapshot.data()['userId'],
-        timestamp = snapshot.data()['timestamp'],
+      : id = snapshot.id,
+        rating = (snapshot.data() as Map)['rating'].toDouble(),
+        text = (snapshot.data() as Map)['text'],
+        userName = (snapshot.data() as Map)['userName'],
+        userId = (snapshot.data() as Map)['userId'],
+        timestamp = (snapshot.data() as Map)['timestamp'],
         reference = snapshot.reference;
 
   Review.fromUserInput({this.rating, this.text, this.userName, this.userId})
@@ -44,7 +43,7 @@ class Review {
         timestamp = null,
         reference = null;
 
-  factory Review.random({String userName, String userId}) {
+  factory Review.random({String? userName, String? userId}) {
     final rating = Random().nextInt(4) + 1;
     final review = getRandomReviewText(rating);
     return Review.fromUserInput(

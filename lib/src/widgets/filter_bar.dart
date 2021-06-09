@@ -19,20 +19,20 @@ import '../model/filter.dart';
 const _boldStyle = TextStyle(fontWeight: FontWeight.bold);
 
 class FilterBar extends StatelessWidget {
-  FilterBar({@required VoidCallback onPressed, Filter filter})
+  FilterBar({required VoidCallback onPressed, Filter? filter})
       : _onPressed = onPressed,
         _filter = filter;
 
   final VoidCallback _onPressed;
-  final Filter _filter;
+  final Filter? _filter;
 
-  List<InlineSpan> _buildCategorySpans(Filter filter) {
+  List<InlineSpan> _buildCategorySpans(Filter? filter) {
     final noneSelected =
         filter == null || filter.isDefault || filter.category == null;
     return [
       if (noneSelected) TextSpan(text: 'All Restaurants', style: _boldStyle),
       if (!noneSelected) ...[
-        TextSpan(text: '${filter.category}', style: _boldStyle),
+        TextSpan(text: '${filter!.category}', style: _boldStyle),
         TextSpan(text: ' places'),
       ],
     ];
@@ -42,12 +42,12 @@ class FilterBar extends StatelessWidget {
     return [
       if (filter.price != null) ...[
         TextSpan(text: ' of '),
-        TextSpan(text: '\$' * filter.price, style: _boldStyle),
+        TextSpan(text: '\$' * filter.price!, style: _boldStyle),
       ],
     ];
   }
 
-  List<InlineSpan> _buildTitleSpans(Filter filter) {
+  List<InlineSpan> _buildTitleSpans(Filter? filter) {
     return [
       ..._buildCategorySpans(filter),
       if (filter != null && !filter.isDefault) ..._buildPriceSpans(filter),
@@ -63,7 +63,7 @@ class FilterBar extends StatelessWidget {
     ];
   }
 
-  List<InlineSpan> _buildSubtitleSpans(Filter filter) {
+  List<InlineSpan> _buildSubtitleSpans(Filter? filter) {
     final orderedByRating =
         filter == null || filter.sort == null || filter.sort == 'avgRating';
     return [
@@ -93,7 +93,7 @@ class FilterBar extends StatelessWidget {
                       text: TextSpan(
                         style: Theme.of(context)
                             .textTheme
-                            .bodyText2
+                            .bodyText2!
                             .copyWith(color: Colors.white),
                         children: _buildTitleSpans(_filter),
                       ),
@@ -103,7 +103,7 @@ class FilterBar extends StatelessWidget {
                       text: TextSpan(
                         style: Theme.of(context)
                             .textTheme
-                            .caption
+                            .caption!
                             .copyWith(color: Colors.white),
                         children: _buildSubtitleSpans(_filter),
                       ),

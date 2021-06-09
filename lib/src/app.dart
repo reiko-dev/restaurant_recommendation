@@ -12,12 +12,13 @@ class FriendlyEatsApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case RestaurantPage.route:
-            final RestaurantPageArguments arguments = settings.arguments;
+            final RestaurantPageArguments? arguments =
+                settings.arguments as RestaurantPageArguments?;
             return MaterialPageRoute(
-                builder: (context) => RestaurantPage(
-                      restaurantId: arguments.id,
-                    ));
-            break;
+              builder: (context) => RestaurantPage(
+                restaurantId: arguments!.id,
+              ),
+            );
           default:
             // return MaterialPageRoute(
             //     builder: (context) => RestaurantPage(

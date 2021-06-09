@@ -19,7 +19,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sliver_fab/sliver_fab.dart';
+import 'package:restaurant_recommendation/src/widgets/sliver_fab_modified.dart';
 
 import 'widgets/empty_list.dart';
 import 'model/data.dart' as data;
@@ -32,9 +32,9 @@ import 'widgets/dialogs/review_create.dart';
 class RestaurantPage extends StatefulWidget {
   static const route = '/restaurant';
 
-  final String _restaurantId;
+  final String? _restaurantId;
 
-  RestaurantPage({Key key, @required String restaurantId})
+  RestaurantPage({Key? key, required String? restaurantId})
       : _restaurantId = restaurantId,
         super(key: key);
 
@@ -44,24 +44,24 @@ class RestaurantPage extends StatefulWidget {
 }
 
 class _RestaurantPageState extends State<RestaurantPage> {
-  _RestaurantPageState({@required String restaurantId}) {
+  _RestaurantPageState({required String? restaurantId}) {
     FirebaseAuth.instance
         .signInAnonymously()
         .then((UserCredential userCredential) {
       data.getRestaurant(restaurantId).then((Restaurant restaurant) {
         _currentReviewSubscription?.cancel();
         setState(() {
-          if (userCredential.user.displayName == null ||
-              userCredential.user.displayName.isEmpty) {
+          if (userCredential.user!.displayName == null ||
+              userCredential.user!.displayName!.isEmpty) {
             _userName = 'Anonymous (${kIsWeb ? "Web" : "Mobile"})';
           } else {
-            _userName = userCredential.user.displayName;
+            _userName = userCredential.user!.displayName;
           }
           _restaurant = restaurant;
-          _userId = userCredential.user.uid;
+          _userId = userCredential.user!.uid;
 
           // Initialize the reviews snapshot...
-          _currentReviewSubscription = _restaurant.reference
+          _currentReviewSubscription = _restaurant!.reference!
               .collection('ratings')
               .orderBy('timestamp', descending: true)
               .snapshots()
@@ -85,11 +85,11 @@ class _RestaurantPageState extends State<RestaurantPage> {
   }
 
   bool _isLoading = true;
-  StreamSubscription<QuerySnapshot> _currentReviewSubscription;
+  StreamSubscription<QuerySnapshot>? _currentReviewSubscription;
 
-  Restaurant _restaurant;
-  String _userId;
-  String _userName;
+  Restaurant? _restaurant;
+  String? _userId;
+  String? _userName;
   List<Review> _reviews = <Review>[];
 
   void _onCreateReviewPressed(BuildContext context) async {
@@ -103,7 +103,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
     if (newReview != null) {
       // Save the review
       return data.addReview(
-        restaurantId: _restaurant.id,
+        restaurantId: _restaurant!.id,
         review: newReview,
       );
     }
@@ -114,7 +114,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
     final numReviews = Random().nextInt(5) + 5;
     for (var i = 0; i < numReviews; i++) {
       await data.addReview(
-        restaurantId: _restaurant.id,
+        restaurantId: _restaurant!.id,
         review: Review.random(
           userId: _userId,
           userName: _userName,
@@ -129,7 +129,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
         ? Center(child: CircularProgressIndicator())
         : Scaffold(
             body: Builder(
-              builder: (context) => SliverFab(
+              builder: (context) => SliverFabModified(
                 floatingWidget: FloatingActionButton(
                   tooltip: 'Add a review',
                   backgroundColor: Colors.amber,
@@ -156,7 +156,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
                       : SliverFillRemaining(
                           hasScrollBody: false,
                           child: EmptyListView(
-                            child: Text('${_restaurant.name} has no reviews.'),
+                            child: Text('${_restaurant!.name} has no reviews.'),
                             onPressed: _onAddRandomReviewsPressed,
                           ),
                         ),
@@ -168,7 +168,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
 }
 
 class RestaurantPageArguments {
-  final String id;
+  final String? id;
 
-  RestaurantPageArguments({@required this.id});
+  RestaurantPageArguments({required this.id});
 }

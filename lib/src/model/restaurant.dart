@@ -18,20 +18,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './values.dart';
 
-typedef RestaurantPressedCallback = void Function(String restaurantId);
+typedef RestaurantPressedCallback = void Function(String? restaurantId);
 
 typedef CloseRestaurantPressedCallback = void Function();
 
 class Restaurant {
-  final String id;
-  final String name;
-  final String category;
-  final String city;
-  final double avgRating;
-  final int numRatings;
-  final int price;
-  final String photo;
-  final DocumentReference reference;
+  final String? id;
+  final String? name;
+  final String? category;
+  final String? city;
+  final double? avgRating;
+  final int? numRatings;
+  final int? price;
+  final String? photo;
+  final DocumentReference? reference;
 
   Restaurant._({this.name, this.category, this.city, this.price, this.photo})
       : id = null,
@@ -40,15 +40,14 @@ class Restaurant {
         reference = null;
 
   Restaurant.fromSnapshot(DocumentSnapshot snapshot)
-      : assert(snapshot != null),
-        id = snapshot.id,
-        name = snapshot.data()['name'],
-        category = snapshot.data()['category'],
-        city = snapshot.data()['city'],
-        avgRating = snapshot.data()['avgRating'].toDouble(),
-        numRatings = snapshot.data()['numRatings'],
-        price = snapshot.data()['price'],
-        photo = snapshot.data()['photo'],
+      : id = snapshot.id,
+        name = (snapshot.data() as Map)['name'],
+        category = (snapshot.data() as Map)['category'],
+        city = (snapshot.data() as Map)['city'],
+        avgRating = (snapshot.data() as Map)['avgRating'].toDouble(),
+        numRatings = (snapshot.data() as Map)['numRatings'],
+        price = (snapshot.data() as Map)['price'],
+        photo = (snapshot.data() as Map)['photo'],
         reference = snapshot.reference;
 
   factory Restaurant.random() {

@@ -31,7 +31,7 @@ import 'widgets/dialogs/filter_select.dart';
 class HomePage extends StatefulWidget {
   static const route = '/';
 
-  HomePage({Key key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -53,10 +53,10 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  StreamSubscription<QuerySnapshot> _currentSubscription;
+  StreamSubscription<QuerySnapshot>? _currentSubscription;
   bool _isLoading = true;
   List<Restaurant> _restaurants = <Restaurant>[];
-  Filter _filter;
+  Filter? _filter;
 
   void _updateRestaurants(QuerySnapshot snapshot) {
     setState(() {

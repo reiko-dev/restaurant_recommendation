@@ -20,11 +20,11 @@ import '../../model/values.dart' as hardcoded;
 import '../../model/filter.dart';
 
 class FilterSelectDialog extends StatefulWidget {
-  FilterSelectDialog({Key key, Filter filter})
+  FilterSelectDialog({Key? key, Filter? filter})
       : _filter = filter,
         super(key: key);
 
-  final Filter _filter;
+  final Filter? _filter;
 
   @override
   _FilterSelectDialogState createState() =>
@@ -32,7 +32,7 @@ class FilterSelectDialog extends StatefulWidget {
 }
 
 class _FilterSelectDialogState extends State<FilterSelectDialog> {
-  _FilterSelectDialogState({Filter filter}) {
+  _FilterSelectDialogState({Filter? filter}) {
     if (filter != null && !filter.isDefault) {
       _category = filter.category;
       _city = filter.city;
@@ -41,20 +41,20 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
     }
   }
 
-  String _category;
-  String _city;
-  int _price;
-  String _sort;
+  String? _category;
+  String? _city;
+  int? _price;
+  String? _sort;
 
   Widget _buildDropdown<T>(
-    List labels,
+    List? labels,
     List values,
     dynamic selected,
-    FilterChangedCallback<T> onChanged,
+    FilterChangedCallback<T?>? onChanged,
   ) {
     final items = [
       for (var i = 0; i < values.length; i++)
-        DropdownMenuItem<T>(value: values[i], child: Text(labels[i])),
+        DropdownMenuItem<T>(value: values[i], child: Text(labels![i])),
     ];
     return DropdownButton<T>(
       items: items,
@@ -65,11 +65,11 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
   }
 
   Widget _buildDropdownRow<T>({
-    List<T> values,
-    List<String> labels,
-    T selected,
-    IconData icon,
-    FilterChangedCallback<T> onChanged,
+    required List<T> values,
+    List<String>? labels,
+    T? selected,
+    IconData? icon,
+    FilterChangedCallback<T?>? onChanged,
   }) {
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -86,10 +86,10 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
   }
 
   Widget _buildCategoryDropdown({
-    String selected,
-    FilterChangedCallback<String> onChanged,
+    String? selected,
+    FilterChangedCallback<String?>? onChanged,
   }) {
-    return _buildDropdownRow<String>(
+    return _buildDropdownRow<String?>(
       labels: ['Any Cuisine', ...hardcoded.categories],
       values: [null, ...hardcoded.categories],
       selected: selected,
@@ -99,10 +99,10 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
   }
 
   Widget _buildCityDropdown({
-    String selected,
-    FilterChangedCallback<String> onChanged,
+    String? selected,
+    FilterChangedCallback<String?>? onChanged,
   }) {
-    return _buildDropdownRow<String>(
+    return _buildDropdownRow<String?>(
       labels: ['Any Location', ...hardcoded.cities],
       values: [null, ...hardcoded.cities],
       selected: selected,
@@ -112,10 +112,10 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
   }
 
   Widget _buildPriceDropdown({
-    int selected,
-    FilterChangedCallback<int> onChanged,
+    int? selected,
+    FilterChangedCallback<int?>? onChanged,
   }) {
-    return _buildDropdownRow<int>(
+    return _buildDropdownRow<int?>(
       labels: ['Any Price', '\$', '\$\$', '\$\$\$', '\$\$\$\$'],
       values: [null, 1, 2, 3, 4],
       selected: selected,
@@ -125,8 +125,8 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
   }
 
   Widget _buildSortDropdown({
-    String selected,
-    FilterChangedCallback<String> onChanged,
+    String? selected,
+    FilterChangedCallback<String?>? onChanged,
   }) {
     return _buildDropdownRow<String>(
       labels: ['Rating', 'Reviews'],
@@ -158,28 +158,28 @@ class _FilterSelectDialogState extends State<FilterSelectDialog> {
           children: [
             _buildCategoryDropdown(
                 selected: _category,
-                onChanged: (String value) {
+                onChanged: (String? value) {
                   setState(() {
                     _category = value;
                   });
                 }),
             _buildCityDropdown(
                 selected: _city,
-                onChanged: (String value) {
+                onChanged: (String? value) {
                   setState(() {
                     _city = value;
                   });
                 }),
             _buildPriceDropdown(
                 selected: _price,
-                onChanged: (int value) {
+                onChanged: (int? value) {
                   setState(() {
                     _price = value;
                   });
                 }),
             _buildSortDropdown(
                 selected: _sort ?? 'avgRating',
-                onChanged: (String value) {
+                onChanged: (String? value) {
                   setState(() {
                     _sort = value;
                   });

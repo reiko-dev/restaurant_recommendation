@@ -21,10 +21,10 @@ import 'stars.dart';
 class RestaurantCard extends StatelessWidget {
   RestaurantCard({
     this.restaurant,
-    @required RestaurantPressedCallback onRestaurantPressed,
+    required RestaurantPressedCallback onRestaurantPressed,
   }) : _onPressed = onRestaurantPressed;
 
-  final Restaurant restaurant;
+  final Restaurant? restaurant;
 
   final RestaurantPressedCallback _onPressed;
 
@@ -32,7 +32,7 @@ class RestaurantCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: InkWell(
-      onTap: () => _onPressed(restaurant.id),
+      onTap: () => _onPressed(restaurant!.id),
       splashColor: Colors.blue.withAlpha(30),
       child: Container(
         height: 250,
@@ -44,7 +44,7 @@ class RestaurantCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image: NetworkImage(restaurant.photo),
+                      image: NetworkImage(restaurant!.photo!),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -61,12 +61,12 @@ class RestaurantCard extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          restaurant.name,
+                          restaurant!.name!,
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                       Text(
-                        '\$' * restaurant.price,
+                        '\$' * restaurant!.price!,
                         style: Theme.of(context).textTheme.caption,
                       ),
                     ],
@@ -75,13 +75,13 @@ class RestaurantCard extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(0, (kIsWeb ? 0 : 2), 0, 4),
                     alignment: Alignment.bottomLeft,
                     child: StarRating(
-                      rating: restaurant.avgRating,
+                      rating: restaurant!.avgRating,
                     ),
                   ),
                   Container(
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      '${restaurant.category} ● ${restaurant.city}',
+                      '${restaurant!.category} ● ${restaurant!.city}',
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
