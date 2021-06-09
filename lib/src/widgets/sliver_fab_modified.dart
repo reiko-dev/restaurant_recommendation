@@ -34,7 +34,7 @@ class SliverFabModified extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return new SliverFabModifiedState();
+    return SliverFabModifiedState();
   }
 }
 
@@ -44,7 +44,7 @@ class SliverFabModifiedState extends State<SliverFabModified> {
   @override
   void initState() {
     super.initState();
-    scrollController = new ScrollController();
+    scrollController = ScrollController();
     scrollController!.addListener(() => setState(() {}));
   }
 
@@ -121,5 +121,6 @@ class FloatingPosition {
   ///The widget will stretch if both [right] and [left] are not nulls.
   final double? left;
 
-  const FloatingPosition({this.top, this.right, this.left});
+  const FloatingPosition({this.top, this.right, this.left})
+      : assert(top != null || left != null || right != null);
 }

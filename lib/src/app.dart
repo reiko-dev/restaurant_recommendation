@@ -9,6 +9,9 @@ class FriendlyEatsApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FriendlyEats',
+      theme: ThemeData(
+        primaryColor: Colors.purple,
+      ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
           case RestaurantPage.route:

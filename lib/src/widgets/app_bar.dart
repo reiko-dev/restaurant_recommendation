@@ -40,8 +40,9 @@ class RestaurantAppBar extends StatelessWidget {
       expandedHeight: appBarHeight,
       forceElevated: true,
       flexibleSpace: FlexibleSpaceBar(
-        centerTitle: false,
+        centerTitle: true,
         title: Wrap(
+          alignment: WrapAlignment.center,
           children: <Widget>[
             Text(
               restaurant!.name!,
@@ -49,6 +50,7 @@ class RestaurantAppBar extends StatelessWidget {
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
                   width: 80,
@@ -64,7 +66,8 @@ class RestaurantAppBar extends StatelessWidget {
                   child: Text(
                     '\$' * restaurant!.price!,
                     style: TextStyle(
-                        fontSize: Theme.of(context).textTheme.caption!.fontSize),
+                        fontSize:
+                            Theme.of(context).textTheme.caption!.fontSize),
                   ),
                 ),
               ],

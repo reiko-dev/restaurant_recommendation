@@ -81,7 +81,7 @@ class FilterBar extends StatelessWidget {
         onPressed: _onPressed,
         child: Row(
           children: [
-            Icon(Icons.filter_list),
+            Icon(Icons.filter_list, color: Colors.white),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(6, 0, 6, 0),

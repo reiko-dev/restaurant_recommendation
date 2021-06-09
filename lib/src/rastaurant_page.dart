@@ -125,45 +125,43 @@ class _RestaurantPageState extends State<RestaurantPage> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Scaffold(
-            body: Builder(
-              builder: (context) => SliverFabModified(
-                floatingWidget: FloatingActionButton(
-                  tooltip: 'Add a review',
-                  backgroundColor: Colors.amber,
-                  child: Icon(Icons.add),
-                  onPressed: () => _onCreateReviewPressed(context),
-                ),
-                floatingPosition: FloatingPosition(right: 16),
-                expandedHeight: RestaurantAppBar.appBarHeight,
-                slivers: <Widget>[
-                  RestaurantAppBar(
-                    restaurant: _restaurant,
-                    onClosePressed: () => Navigator.pop(context),
-                  ),
-                  _reviews.isNotEmpty
-                      ? SliverPadding(
-                          padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                          sliver: SliverList(
-                            delegate: SliverChildListDelegate(_reviews
-                                .map((Review review) =>
-                                    RestaurantReview(review: review))
-                                .toList()),
-                          ),
-                        )
-                      : SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: EmptyListView(
-                            child: Text('${_restaurant!.name} has no reviews.'),
-                            onPressed: _onAddRandomReviewsPressed,
-                          ),
-                        ),
-                ],
+    return Scaffold(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SliverFabModified(
+              floatingWidget: FloatingActionButton(
+                tooltip: 'Add a review',
+                backgroundColor: Colors.amber,
+                child: Icon(Icons.add),
+                onPressed: () => _onCreateReviewPressed(context),
               ),
+              floatingPosition: FloatingPosition(right: 16),
+              expandedHeight: RestaurantAppBar.appBarHeight,
+              slivers: <Widget>[
+                RestaurantAppBar(
+                  restaurant: _restaurant,
+                  onClosePressed: () => Navigator.pop(context),
+                ),
+                _reviews.isNotEmpty
+                    ? SliverPadding(
+                        padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                        sliver: SliverList(
+                          delegate: SliverChildListDelegate(_reviews
+                              .map((Review review) =>
+                                  RestaurantReview(review: review))
+                              .toList()),
+                        ),
+                      )
+                    : SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: EmptyListView(
+                          child: Text('${_restaurant!.name} has no reviews.'),
+                          onPressed: _onAddRandomReviewsPressed,
+                        ),
+                      ),
+              ],
             ),
-          );
+    );
   }
 }
 

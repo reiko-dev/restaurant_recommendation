@@ -99,6 +99,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: Icon(Icons.restaurant),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
         title: Text('FriendlyEats'),
         bottom: PreferredSize(
           preferredSize: Size(320, 48),
