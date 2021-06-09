@@ -7,6 +7,7 @@ class FriendlyEatsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'FriendlyEats',
       onGenerateRoute: (settings) {
         switch (settings.name) {

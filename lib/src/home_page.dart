@@ -69,6 +69,7 @@ class _HomePageState extends State<HomePage> {
     final numReviews = Random().nextInt(10) + 20;
 
     final restaurants = List.generate(numReviews, (_) => Restaurant.random());
+
     data.addRestaurantsBatch(restaurants);
   }
 
