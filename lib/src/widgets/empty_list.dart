@@ -43,7 +43,9 @@ class EmptyListView extends StatelessWidget {
               'assets/friendlyeater.png',
             ),
           ),
-          ElevatedButton(child: Text('ADD SOME'), onPressed: onPressed),
+          if (child != null) child!,
+          SizedBox(height: screenHeight * 0.01),
+          ElevatedButton(child: Text('ADD REVIEW'), onPressed: onPressed),
         ],
       ),
     );

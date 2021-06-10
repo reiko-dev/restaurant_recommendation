@@ -32,10 +32,18 @@ class ReviewCreateDialog extends StatefulWidget {
 class _ReviewCreateDialogState extends State<ReviewCreateDialog> {
   double rating = 0;
   String? review;
+  Color ratingColor = Colors.grey;
+
+  void updateRating(double value) {
+    rating = value;
+    if (value <= 2.5) ratingColor = Colors.grey;
+
+    if (value > 2.5) ratingColor = Colors.amber;
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    Color color = rating == 0 ? Colors.grey : Colors.amber;
     return AlertDialog(
       title: Text('Add a Review'),
       content: Container(
@@ -49,29 +57,35 @@ class _ReviewCreateDialogState extends State<ReviewCreateDialog> {
               child: SmoothStarRating(
                 starCount: 5,
                 rating: rating,
-                color: color,
+                color: ratingColor,
                 borderColor: Colors.grey,
                 size: 32,
-                onRated: (value) {
-                  if (mounted) {
-                    rating = value;
-                  }
-                },
+                onRated: updateRating,
               ),
             ),
             Expanded(
-              child: TextField(
-                decoration: InputDecoration.collapsed(
-                    hintText: 'Type your review here.'),
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onChanged: (value) {
-                  if (mounted) {
-                    setState(() {
-                      review = value;
-                    });
-                  }
-                },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey.shade100,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    decoration: InputDecoration.collapsed(
+                      hintText: 'Type your review here.',
+                    ),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    onChanged: (value) {
+                      if (mounted) {
+                        setState(() {
+                          review = value;
+                        });
+                      }
+                    },
+                  ),
+                ),
               ),
             ),
           ],

@@ -109,20 +109,6 @@ class _RestaurantPageState extends State<RestaurantPage> {
     }
   }
 
-  void _onAddRandomReviewsPressed() async {
-    // Await adding a random number of random reviews
-    final numReviews = Random().nextInt(5) + 5;
-    for (var i = 0; i < numReviews; i++) {
-      await data.addReview(
-        restaurantId: _restaurant!.id,
-        review: Review.random(
-          userId: _userId,
-          userName: _userName,
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,7 +142,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
                         hasScrollBody: false,
                         child: EmptyListView(
                           child: Text('${_restaurant!.name} has no reviews.'),
-                          onPressed: _onAddRandomReviewsPressed,
+                          onPressed: () => _onCreateReviewPressed(context),
                         ),
                       ),
               ],

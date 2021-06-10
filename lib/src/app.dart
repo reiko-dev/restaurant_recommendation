@@ -11,6 +11,7 @@ class FriendlyEatsApp extends StatelessWidget {
       title: 'FriendlyEats',
       theme: ThemeData(
         primaryColor: Colors.purple,
+        accentColor: Colors.amber,
       ),
       onGenerateRoute: (settings) {
         switch (settings.name) {
