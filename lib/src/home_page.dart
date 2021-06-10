@@ -19,7 +19,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:restaurant_recommendation/src/rastaurant_page.dart';
+import 'package:restaurant_recommendation/src/restaurant_page.dart';
 
 import 'model/data.dart' as data;
 import 'model/filter.dart';
@@ -140,13 +140,14 @@ class _HomePageState extends State<HomePage> {
               : _restaurants.isNotEmpty
                   ? RestaurantGrid(
                       restaurants: _restaurants,
-                      onRestaurantPressed: (id) {
+                      onRestaurantPressed: (restaurant) {
                         /// TODO: Share the link of the restaurant through deep links on web
                         ///
                         Navigator.pushNamed(
                           context,
                           RestaurantPage.route,
-                          arguments: RestaurantPageArguments(id: id),
+                          arguments:
+                              RestaurantPageArguments(restaurant: restaurant),
                         );
                       },
                     )

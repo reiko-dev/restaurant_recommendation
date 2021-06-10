@@ -31,24 +31,44 @@ import 'widgets/dialogs/review_create.dart';
 class RestaurantPage extends StatefulWidget {
   static const route = '/restaurant';
 
-  final String? _restaurantId;
+  final Restaurant? restaurant;
+  final String? id;
 
-  RestaurantPage({Key? key, required String? restaurantId})
-      : _restaurantId = restaurantId,
-        super(key: key);
+  RestaurantPage({
+    this.restaurant,
+    this.id,
+  }) : super(key: ValueKey(id ?? restaurant!.id));
 
   @override
-  _RestaurantPageState createState() =>
-      _RestaurantPageState(restaurantId: _restaurantId);
+  _RestaurantPageState createState() => _RestaurantPageState();
 }
 
 class _RestaurantPageState extends State<RestaurantPage> {
-  _RestaurantPageState({required String? restaurantId}) {
+  //Makes different transitions based on the value passed to the constructor.
+  //If a full restaurant is passed we can make a proper Hero animation
+  //
+  StreamSubscription<QuerySnapshot>? _currentReviewSubscription;
+  StreamSubscription<DocumentSnapshot>? _restaurantSubscription;
+  Restaurant? _restaurant;
+  String? _userId;
+  String? _userName;
+  List<Review> _reviews = <Review>[];
+  bool isLoadingReviews = true;
+
+  @override
+  void initState() {
+    super.initState();
+    String id = '';
+    if (widget.restaurant != null) {
+      id = widget.restaurant!.id!;
+      _restaurant = widget.restaurant;
+    } else
+      id = widget.id!;
+
     FirebaseAuth.instance
         .signInAnonymously()
         .then((UserCredential userCredential) {
-      data.getRestaurant(restaurantId).then((Restaurant restaurant) {
-        _currentReviewSubscription?.cancel();
+      data.getRestaurant(id).then((Restaurant restaurant) {
         setState(() {
           if (userCredential.user!.displayName == null ||
               userCredential.user!.displayName!.isEmpty) {
@@ -59,10 +79,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
           _restaurant = restaurant;
           _userId = userCredential.user!.uid;
 
-          //
-          _restaurantSubscription = FirebaseFirestore.instance
-              .collection('restaurants')
-              .doc(restaurantId)
+          // Initialize the restaurant snapshot...
+          _restaurantSubscription = _restaurant!.reference!
               .snapshots()
               .listen((DocumentSnapshot restaurant) {
             setState(() {
@@ -70,34 +88,24 @@ class _RestaurantPageState extends State<RestaurantPage> {
             });
           });
 
-          ///mto bom
-          ///5 stars
           // Initialize the reviews snapshot...
-          //Move this to a new widget.
           _currentReviewSubscription = _restaurant!.reference!
               .collection('ratings')
               .orderBy('timestamp', descending: true)
               .snapshots()
               .listen((QuerySnapshot reviewSnap) {
-            _isLoading = false;
             _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
               return Review.fromSnapshot(doc);
             }).toList();
 
-            setState(() {});
+            setState(() {
+              isLoadingReviews = false;
+            });
           });
         });
       });
     });
   }
-
-  bool _isLoading = true;
-  StreamSubscription<QuerySnapshot>? _currentReviewSubscription;
-  StreamSubscription<DocumentSnapshot>? _restaurantSubscription;
-  Restaurant? _restaurant;
-  String? _userId;
-  String? _userName;
-  List<Review> _reviews = <Review>[];
 
   @override
   void dispose() {
@@ -110,8 +118,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
     final newReview = await showDialog<Review>(
       context: context,
       builder: (_) => ReviewCreateDialog(
-        userId: _userId,
-        userName: _userName,
+        userId: _userId!,
+        userName: _userName!,
       ),
     );
     if (newReview != null) {
@@ -126,47 +134,57 @@ class _RestaurantPageState extends State<RestaurantPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SliverFabModified(
-              floatingWidget: FloatingActionButton(
-                tooltip: 'Add a review',
-                backgroundColor: Colors.amber,
-                child: Icon(Icons.add),
-                onPressed: () => _onCreateReviewPressed(context),
-              ),
-              floatingPosition: FloatingPosition(right: 16),
-              expandedHeight: RestaurantAppBar.appBarHeight,
-              slivers: <Widget>[
-                RestaurantAppBar(
-                  restaurant: _restaurant,
-                  onClosePressed: () => Navigator.pop(context),
+      body: SliverFabModified(
+        floatingWidget: FloatingActionButton(
+          tooltip: 'Add a review',
+          backgroundColor: Colors.amber,
+          child: Icon(Icons.add),
+          onPressed: () => _onCreateReviewPressed(context),
+        ),
+        floatingPosition: FloatingPosition(right: 16),
+        expandedHeight: RestaurantAppBar.appBarHeight,
+        slivers: <Widget>[
+          RestaurantAppBar(
+            restaurant: _restaurant!,
+            onClosePressed: () => Navigator.pop(context),
+          ),
+          if (isLoadingReviews)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: CircularProgressIndicator(
+                  color: Colors.amber,
                 ),
-                _reviews.isNotEmpty
-                    ? SliverPadding(
-                        padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate(_reviews
-                              .map((Review review) =>
-                                  RestaurantReview(review: review))
-                              .toList()),
-                        ),
-                      )
-                    : SliverFillRemaining(
-                        hasScrollBody: false,
-                        child: EmptyListView(
-                          child: Text('${_restaurant!.name} has no reviews.'),
-                          onPressed: () => _onCreateReviewPressed(context),
-                        ),
-                      ),
-              ],
+              ),
             ),
+          if (!isLoadingReviews)
+            _reviews.isNotEmpty
+                ? SliverPadding(
+                    padding: EdgeInsets.fromLTRB(16, 24, 16, 8),
+                    sliver: SliverList(
+                      delegate: SliverChildListDelegate(_reviews
+                          .map((Review review) =>
+                              RestaurantReview(review: review))
+                          .toList()),
+                    ),
+                  )
+                : SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: EmptyListView(
+                      child: Text('${_restaurant!.name} has no reviews.'),
+                      onPressed: () => _onCreateReviewPressed(context),
+                    ),
+                  ),
+        ],
+      ),
     );
   }
 }
 
 class RestaurantPageArguments {
   final String? id;
+  final Restaurant? restaurant;
 
-  RestaurantPageArguments({required this.id});
+  RestaurantPageArguments({this.id, this.restaurant})
+      : assert(id != null || restaurant != null);
 }

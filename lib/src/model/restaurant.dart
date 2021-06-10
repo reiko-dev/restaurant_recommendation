@@ -18,35 +18,40 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './values.dart';
 
-typedef RestaurantPressedCallback = void Function(String? restaurantId);
+typedef RestaurantPressedCallback = void Function(Restaurant? restaurantId);
 
 typedef CloseRestaurantPressedCallback = void Function();
 
 class Restaurant {
   final String? id;
-  final String? name;
-  final String? category;
-  final String? city;
-  final double? avgRating;
-  final int? numRatings;
-  final int? price;
-  final String? photo;
+  final String name;
+  final String category;
+  final String city;
+  final double avgRating;
+  final int numRatings;
+  final int price;
+  final String photo;
   final DocumentReference? reference;
 
   Restaurant({
-    this.avgRating,
-    this.category,
-    this.city,
-    this.id,
-    this.name,
-    this.numRatings,
-    this.photo,
-    this.price,
+    required this.avgRating,
+    required this.category,
+    required this.city,
+    required this.id,
+    required this.name,
+    required this.numRatings,
+    required this.photo,
+    required this.price,
     this.reference,
   });
 
-  Restaurant._({this.name, this.category, this.city, this.price, this.photo})
-      : id = null,
+  Restaurant._({
+    required this.name,
+    required this.category,
+    required this.city,
+    required this.price,
+    required this.photo,
+  })  : id = null,
         numRatings = 0,
         avgRating = 0,
         reference = null;

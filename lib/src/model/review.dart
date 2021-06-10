@@ -21,10 +21,10 @@ import './values.dart';
 // This is called "ratings" in the backend.
 class Review {
   final String? id;
-  final String? userId;
-  final double? rating;
-  final String? text;
-  final String? userName;
+  final String userId;
+  final double rating;
+  final String text;
+  final String userName;
   final Timestamp? timestamp;
 
   final DocumentReference? reference;
@@ -38,12 +38,16 @@ class Review {
         timestamp = (snapshot.data() as Map)['timestamp'],
         reference = snapshot.reference;
 
-  Review.fromUserInput({this.rating, this.text, this.userName, this.userId})
-      : id = null,
+  Review.fromUserInput({
+    required this.rating,
+    required this.text,
+    required this.userName,
+    required this.userId,
+  })  : id = null,
         timestamp = null,
         reference = null;
 
-  factory Review.random({String? userName, String? userId}) {
+  factory Review.random({required String userName, required String userId}) {
     final rating = Random().nextInt(4) + 1;
     final review = getRandomReviewText(rating);
     return Review.fromUserInput(

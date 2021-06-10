@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_recommendation/src/rastaurant_page.dart';
+import 'package:restaurant_recommendation/src/restaurant_page.dart';
 
 import 'home_page.dart';
 
@@ -18,10 +18,13 @@ class FriendlyEatsApp extends StatelessWidget {
           case RestaurantPage.route:
             final RestaurantPageArguments? arguments =
                 settings.arguments as RestaurantPageArguments?;
+
             return MaterialPageRoute(
-              builder: (context) => RestaurantPage(
-                restaurantId: arguments!.id,
-              ),
+              builder: (context) {
+                return RestaurantPage(
+                  restaurant: arguments!.restaurant,
+                );
+              },
             );
           default:
             // return MaterialPageRoute(

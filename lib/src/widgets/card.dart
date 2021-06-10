@@ -32,7 +32,7 @@ class RestaurantCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: InkWell(
-      onTap: () => _onPressed(restaurant!.id),
+      onTap: () => _onPressed(restaurant!),
       splashColor: Colors.blue.withAlpha(30),
       child: Container(
         height: 250,
@@ -40,15 +40,22 @@ class RestaurantCard extends StatelessWidget {
           children: <Widget>[
             // TODO: Make this a Hero widget so we can transition to it?
             Expanded(
-              child: Container(
-                  alignment: Alignment.centerLeft,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(restaurant!.photo!),
-                      fit: BoxFit.cover,
+              child: LayoutBuilder(
+                builder: (con, bc) {
+                  return SizedBox(
+                    width: bc.maxWidth,
+                    height: bc.maxHeight,
+                    child: Hero(
+                      tag: restaurant!.id!,
+                      child: Image.network(
+                        restaurant!.photo,
+                        alignment: Alignment.centerLeft,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: null),
+                  );
+                },
+              ),
             ),
             Padding(
               padding: EdgeInsets.all(8),
@@ -61,12 +68,12 @@ class RestaurantCard extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          restaurant!.name!,
+                          restaurant!.name,
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                       Text(
-                        '\$' * restaurant!.price!,
+                        '\$' * restaurant!.price,
                         style: Theme.of(context).textTheme.caption,
                       ),
                     ],

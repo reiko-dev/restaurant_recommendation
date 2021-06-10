@@ -21,12 +21,12 @@ class RestaurantAppBar extends StatelessWidget {
   static final double appBarHeight = 160;
 
   RestaurantAppBar({
-    this.restaurant,
+    required this.restaurant,
     CloseRestaurantPressedCallback? onClosePressed,
   })  : _onPressed = onClosePressed,
         super(key: UniqueKey());
 
-  final Restaurant? restaurant;
+  final Restaurant restaurant;
 
   final CloseRestaurantPressedCallback? _onPressed;
 
@@ -46,7 +46,7 @@ class RestaurantAppBar extends StatelessWidget {
           alignment: WrapAlignment.center,
           children: <Widget>[
             Text(
-              restaurant!.name!,
+              restaurant.name,
               overflow: TextOverflow.ellipsis,
             ),
             Row(
@@ -57,7 +57,7 @@ class RestaurantAppBar extends StatelessWidget {
                   width: 80,
                   alignment: Alignment.bottomLeft,
                   child: StarRating(
-                    rating: restaurant!.avgRating,
+                    rating: restaurant.avgRating,
                     color: Colors.white,
                     size: 16,
                   ),
@@ -65,7 +65,7 @@ class RestaurantAppBar extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 6),
                   child: Text(
-                    '\$' * restaurant!.price!,
+                    '\$' * restaurant.price,
                     style: TextStyle(
                         fontSize:
                             Theme.of(context).textTheme.caption!.fontSize),
@@ -76,7 +76,7 @@ class RestaurantAppBar extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(top: 2),
               child: Text(
-                '${restaurant!.category} ● ${restaurant!.city}',
+                '${restaurant.category} ● ${restaurant.city}',
                 style: TextStyle(
                     fontSize: Theme.of(context).textTheme.caption!.fontSize),
               ),
@@ -86,9 +86,12 @@ class RestaurantAppBar extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              restaurant!.photo!,
-              fit: BoxFit.cover,
+            Hero(
+              tag: restaurant.id!,
+              child: Image.network(
+                restaurant.photo,
+                fit: BoxFit.cover,
+              ),
             ),
             Container(
               decoration: BoxDecoration(

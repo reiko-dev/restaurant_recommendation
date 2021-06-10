@@ -43,7 +43,7 @@ class RestaurantReview extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    review.userName!,
+                    review.userName,
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ),
@@ -55,7 +55,7 @@ class RestaurantReview extends StatelessWidget {
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                    child: Text(review.text ?? ''),
+                    child: Text(review.text),
                   ),
                 ),
               ],

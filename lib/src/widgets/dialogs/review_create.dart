@@ -20,10 +20,10 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 import '../../model/review.dart';
 
 class ReviewCreateDialog extends StatefulWidget {
-  final String? userName;
-  final String? userId;
+  final String userName;
+  final String userId;
 
-  ReviewCreateDialog({this.userName, this.userId, Key? key});
+  ReviewCreateDialog({required this.userName, required this.userId, Key? key});
 
   @override
   _ReviewCreateDialogState createState() => _ReviewCreateDialogState();
@@ -31,7 +31,7 @@ class ReviewCreateDialog extends StatefulWidget {
 
 class _ReviewCreateDialogState extends State<ReviewCreateDialog> {
   double rating = 0;
-  String? review;
+  String review = '';
   Color ratingColor = Colors.grey;
 
   void updateRating(double value) {

@@ -17,12 +17,12 @@ import 'package:smooth_star_rating/smooth_star_rating.dart';
 
 class StarRating extends StatelessWidget {
   StarRating({
-    this.rating,
+    this.rating = 0,
     this.color = Colors.amber,
     this.size = 24,
   });
 
-  final double? rating;
+  final double rating;
   final double size;
   final Color color;
 
@@ -31,7 +31,7 @@ class StarRating extends StatelessWidget {
     return SmoothStarRating(
       starCount: 5,
       allowHalfRating: true,
-      rating: rating!,
+      rating: rating,
       color: color,
       borderColor: color,
       size: size,

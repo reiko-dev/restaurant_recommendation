@@ -73,10 +73,9 @@ Future<void> addReview({String? restaurantId, Review? review}) {
         .get(restaurant)
         .then((DocumentSnapshot doc) => Restaurant.fromSnapshot(doc))
         .then((Restaurant fresh) {
-      final newRatings = fresh.numRatings! + 1;
+      final newRatings = fresh.numRatings + 1;
       final newAverage =
-          ((fresh.numRatings! * fresh.avgRating!) + review!.rating!) /
-              newRatings;
+          ((fresh.numRatings * fresh.avgRating) + review!.rating) / newRatings;
 
       transaction.update(restaurant, {
         'numRatings': newRatings,
@@ -133,7 +132,7 @@ Future<void> addRestaurantsBatch(
     double avgRating = 0;
 
     randomReviews.forEach((element) {
-      avgRating += element.rating!;
+      avgRating += element.rating;
     });
 
     if (avgRating > 1) {
