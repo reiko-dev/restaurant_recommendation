@@ -72,6 +72,59 @@ class Restaurant {
     );
   }
 
+  Restaurant copyWith({
+    String? id,
+    String? name,
+    String? category,
+    String? city,
+    double? avgRating,
+    int? numRatings,
+    int? price,
+    String? photo,
+    DocumentReference? reference,
+  }) {
+    return Restaurant(
+      avgRating: avgRating ?? this.avgRating,
+      category: category ?? this.category,
+      city: city ?? this.city,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      numRatings: numRatings ?? this.numRatings,
+      photo: photo ?? this.photo,
+      price: price ?? this.price,
+      reference: reference ?? this.reference,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Restaurant) {
+      return other.runtimeType == this.runtimeType &&
+          other.avgRating == this.avgRating &&
+          other.category == this.category &&
+          other.city == this.city &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.numRatings == this.numRatings &&
+          other.photo == this.photo &&
+          other.price == this.price &&
+          other.reference == this.reference;
+    } else
+      return false;
+  }
+
+  @override
+  int get hashCode =>
+      avgRating.hashCode ^
+      category.hashCode ^
+      city.hashCode ^
+      id.hashCode ^
+      name.hashCode ^
+      numRatings.hashCode ^
+      photo.hashCode ^
+      price.hashCode ^
+      reference.hashCode;
+
   @override
   String toString() {
     return '(id: $id, name: $name, Category: $category, city: $city, avgRating: $avgRating, ratings: $numRatings, price: $price, photo: $photo)';

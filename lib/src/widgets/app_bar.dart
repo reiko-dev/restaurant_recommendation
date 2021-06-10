@@ -23,7 +23,8 @@ class RestaurantAppBar extends StatelessWidget {
   RestaurantAppBar({
     this.restaurant,
     CloseRestaurantPressedCallback? onClosePressed,
-  }) : _onPressed = onClosePressed;
+  })  : _onPressed = onClosePressed,
+        super(key: UniqueKey());
 
   final Restaurant? restaurant;
 

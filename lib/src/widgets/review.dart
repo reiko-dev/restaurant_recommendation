@@ -19,10 +19,10 @@ import 'stars.dart';
 
 class RestaurantReview extends StatelessWidget {
   RestaurantReview({
-    this.review,
-  });
+    required this.review,
+  }) : super(key: ValueKey(review.id));
 
-  final Review? review;
+  final Review review;
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,11 @@ class RestaurantReview extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    review!.userName!,
+                    review.userName!,
                     style: Theme.of(context).textTheme.caption,
                   ),
                 ),
-                StarRating(rating: review!.rating, size: 16),
+                StarRating(rating: review.rating, size: 16),
               ],
             ),
             Row(
@@ -55,7 +55,7 @@ class RestaurantReview extends StatelessWidget {
                 Expanded(
                   child: Container(
                     padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
-                    child: Text(review!.text ?? ''),
+                    child: Text(review.text ?? ''),
                   ),
                 ),
               ],

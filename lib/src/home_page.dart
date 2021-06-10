@@ -116,7 +116,10 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         leading: Icon(Icons.restaurant),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(10))),
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(10),
+          ),
+        ),
         title: Text('FriendlyEats'),
         bottom: PreferredSize(
           preferredSize: Size(320, 48),
@@ -140,9 +143,13 @@ class _HomePageState extends State<HomePage> {
                       onRestaurantPressed: (id) {
                         /// TODO: Share the link of the restaurant through deep links on web
                         ///
-                        Navigator.pushNamed(context, RestaurantPage.route,
-                            arguments: RestaurantPageArguments(id: id));
-                      })
+                        Navigator.pushNamed(
+                          context,
+                          RestaurantPage.route,
+                          arguments: RestaurantPageArguments(id: id),
+                        );
+                      },
+                    )
                   : EmptyListView(
                       child: Text('FriendlyEats has no restaurants yet!'),
                       onPressed: _onAddRandomRestaurantsPressed,

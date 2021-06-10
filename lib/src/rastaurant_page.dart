@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,37 +59,52 @@ class _RestaurantPageState extends State<RestaurantPage> {
           _restaurant = restaurant;
           _userId = userCredential.user!.uid;
 
+          //
+          _restaurantSubscription = FirebaseFirestore.instance
+              .collection('restaurants')
+              .doc(restaurantId)
+              .snapshots()
+              .listen((DocumentSnapshot restaurant) {
+            setState(() {
+              _restaurant = Restaurant.fromSnapshot(restaurant);
+            });
+          });
+
+          ///mto bom
+          ///5 stars
           // Initialize the reviews snapshot...
+          //Move this to a new widget.
           _currentReviewSubscription = _restaurant!.reference!
               .collection('ratings')
               .orderBy('timestamp', descending: true)
               .snapshots()
               .listen((QuerySnapshot reviewSnap) {
-            setState(() {
-              _isLoading = false;
-              _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
-                return Review.fromSnapshot(doc);
-              }).toList();
-            });
+            _isLoading = false;
+            _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
+              return Review.fromSnapshot(doc);
+            }).toList();
+
+            setState(() {});
           });
         });
       });
     });
   }
 
-  @override
-  void dispose() {
-    _currentReviewSubscription?.cancel();
-    super.dispose();
-  }
-
   bool _isLoading = true;
   StreamSubscription<QuerySnapshot>? _currentReviewSubscription;
-
+  StreamSubscription<DocumentSnapshot>? _restaurantSubscription;
   Restaurant? _restaurant;
   String? _userId;
   String? _userName;
   List<Review> _reviews = <Review>[];
+
+  @override
+  void dispose() {
+    _currentReviewSubscription?.cancel();
+    _restaurantSubscription?.cancel();
+    super.dispose();
+  }
 
   void _onCreateReviewPressed(BuildContext context) async {
     final newReview = await showDialog<Review>(
