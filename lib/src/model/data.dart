@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import './filter.dart';
 import './restaurant.dart';
 import './review.dart';
 
-// This is the file that Codelab users will primarily work on.
-
-Future<void> addRestaurant(Restaurant restaurant) {
+//Returns their generatedId
+Future<String> addRestaurant(Restaurant restaurant) async {
   final restaurants = FirebaseFirestore.instance.collection('restaurants');
 
-  return restaurants.add({
+  final doc = await restaurants.add({
     'avgRating': restaurant.avgRating,
     'category': restaurant.category,
     'city': restaurant.city,
@@ -32,6 +33,7 @@ Future<void> addRestaurant(Restaurant restaurant) {
     'photo': restaurant.photo,
     'price': restaurant.price,
   });
+  return doc.id;
 }
 
 Stream<QuerySnapshot> loadAllRestaurants() {
@@ -73,7 +75,8 @@ Future<void> addReview({String? restaurantId, Review? review}) {
         .then((Restaurant fresh) {
       final newRatings = fresh.numRatings! + 1;
       final newAverage =
-          ((fresh.numRatings! * fresh.avgRating!) + review!.rating!) / newRatings;
+          ((fresh.numRatings! * fresh.avgRating!) + review!.rating!) /
+              newRatings;
 
       transaction.update(restaurant, {
         'numRatings': newRatings,
@@ -112,8 +115,71 @@ Stream<QuerySnapshot> loadFilteredRestaurants(Filter filter) {
       .snapshots();
 }
 
-void addRestaurantsBatch(List<Restaurant> restaurants) {
-  restaurants.forEach((Restaurant restaurant) {
-    addRestaurant(restaurant);
+///Stores a random number of reviews for each restaurant, using a WriteBatch.
+Future<void> addRestaurantsBatch(
+  List<Restaurant> restaurantsToStoreOnDB,
+  String userName,
+  String userId,
+) async {
+  final batch = FirebaseFirestore.instance.batch();
+
+  //Will hold a list of addRestaurant futures.
+  //After each future a list of reviews is added to db.
+  final List<Future> futures = [];
+
+  restaurantsToStoreOnDB.forEach((Restaurant restaurant) {
+    final randomReviews = generateRandomReviews(userId, userName);
+
+    double avgRating = 0;
+
+    randomReviews.forEach((element) {
+      avgRating += element.rating!;
+    });
+
+    if (avgRating > 1) {
+      avgRating /= randomReviews.length;
+    }
+
+    //Could just simply adds a CopyWith method on the Restaurant class.
+    final updatedRestaurant = Restaurant(
+      category: restaurant.category,
+      city: restaurant.city,
+      id: restaurant.id,
+      name: restaurant.name,
+      photo: restaurant.photo,
+      reference: restaurant.reference,
+      price: restaurant.price,
+      numRatings: randomReviews.length,
+      avgRating: avgRating,
+    );
+
+    futures.add(
+      addRestaurant(updatedRestaurant).then((id) {
+        final restaurantDoc =
+            FirebaseFirestore.instance.collection('restaurants').doc(id);
+
+        randomReviews.forEach((review) {
+          final ratingsCollection = restaurantDoc.collection('ratings').doc();
+          batch.set(
+            ratingsCollection,
+            review.toMap(),
+          );
+        });
+      }),
+    );
   });
+
+  Future.wait(futures).then((value) => batch.commit());
+}
+
+List<Review> generateRandomReviews(String userId, String userName) {
+  final numReviews = Random().nextInt(7);
+  final List<Review> reviews = [];
+  for (var i = 0; i < numReviews; i++) {
+    reviews.add(
+      Review.random(userId: userId, userName: userName),
+    );
+  }
+
+  return reviews;
 }

@@ -134,6 +134,27 @@ final _reviewTextPerRating = {
   ],
 };
 
+final _names = [
+  'John',
+  'Mary',
+  'Cait',
+  'June',
+  'Morgan',
+  'Mathews',
+  'Ana',
+  'Carl',
+  'Max',
+  'Will',
+  'Jordan',
+  'Michael',
+  'Ren',
+  'Grant',
+  'Jeff',
+  'Elon',
+  'Magnus',
+  'Carlson',
+];
+
 final random = Random();
 
 String getRandomReviewText(int rating) {
@@ -141,13 +162,19 @@ String getRandomReviewText(int rating) {
   return reviews[random.nextInt(reviews.length)];
 }
 
-String getRandomName() {
+String getRandomRestaurantName() {
   final firstWord = random.nextInt(_words.length);
   var nextWord;
   do {
     nextWord = random.nextInt(_words.length);
   } while (firstWord == nextWord);
   return '${_words[firstWord]} ${_words[nextWord]}';
+}
+
+String getRandomName() {
+  final idx = random.nextInt(_names.length);
+
+  return '${_names[idx]}';
 }
 
 String getRandomCategory() {

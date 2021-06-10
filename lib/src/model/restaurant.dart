@@ -33,6 +33,18 @@ class Restaurant {
   final String? photo;
   final DocumentReference? reference;
 
+  Restaurant({
+    this.avgRating,
+    this.category,
+    this.city,
+    this.id,
+    this.name,
+    this.numRatings,
+    this.photo,
+    this.price,
+    this.reference,
+  });
+
   Restaurant._({this.name, this.category, this.city, this.price, this.photo})
       : id = null,
         numRatings = 0,
@@ -54,9 +66,14 @@ class Restaurant {
     return Restaurant._(
       category: getRandomCategory(),
       city: getRandomCity(),
-      name: getRandomName(),
+      name: getRandomRestaurantName(),
       price: Random().nextInt(3) + 1,
       photo: getRandomPhoto(),
     );
+  }
+
+  @override
+  String toString() {
+    return '(id: $id, name: $name, Category: $category, city: $city, avgRating: $avgRating, ratings: $numRatings, price: $price, photo: $photo)';
   }
 }

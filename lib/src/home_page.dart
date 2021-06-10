@@ -17,6 +17,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_recommendation/src/rastaurant_page.dart';
 
@@ -44,6 +45,14 @@ class _HomePageState extends State<HomePage> {
         .then((UserCredential userCredential) {
       _currentSubscription =
           data.loadAllRestaurants().listen(_updateRestaurants);
+
+      if (userCredential.user!.displayName == null ||
+          userCredential.user!.displayName!.isEmpty) {
+        _userName = 'Anonymous (${kIsWeb ? "Web" : "Mobile"})';
+      } else {
+        _userName = userCredential.user!.displayName;
+      }
+      _userId = userCredential.user!.uid;
     });
   }
 
@@ -58,6 +67,9 @@ class _HomePageState extends State<HomePage> {
   List<Restaurant> _restaurants = <Restaurant>[];
   Filter? _filter;
 
+  String? _userName;
+  String? _userId;
+
   void _updateRestaurants(QuerySnapshot snapshot) {
     setState(() {
       _isLoading = false;
@@ -70,7 +82,11 @@ class _HomePageState extends State<HomePage> {
 
     final restaurants = List.generate(numReviews, (_) => Restaurant.random());
 
-    data.addRestaurantsBatch(restaurants);
+    data.addRestaurantsBatch(
+      restaurants,
+      _userName!,
+      _userId!,
+    );
   }
 
   Future<void> _onFilterBarPressed() async {
@@ -122,7 +138,8 @@ class _HomePageState extends State<HomePage> {
                   ? RestaurantGrid(
                       restaurants: _restaurants,
                       onRestaurantPressed: (id) {
-                        // TODO: Add deep links on web
+                        /// TODO: Share the link of the restaurant through deep links on web
+                        ///
                         Navigator.pushNamed(context, RestaurantPage.route,
                             arguments: RestaurantPageArguments(id: id));
                       })

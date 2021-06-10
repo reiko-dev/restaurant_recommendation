@@ -47,9 +47,26 @@ class Review {
     final rating = Random().nextInt(4) + 1;
     final review = getRandomReviewText(rating);
     return Review.fromUserInput(
-        rating: rating.toDouble(),
-        text: review,
-        userName: userName,
-        userId: userId);
+      rating: rating.toDouble(),
+      text: review,
+      userName: userName,
+      userId: userId,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'rating': rating,
+      'text': text,
+      'userName': userName,
+      'userId': userId,
+      'timestamp': timestamp,
+    };
+  }
+
+  @override
+  String toString() {
+    return '(id: $id, userId: $userId, rating: $rating, text: $text)';
   }
 }
