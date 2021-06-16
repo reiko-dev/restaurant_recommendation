@@ -18,6 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:restaurant_recommendation/src/home_page.dart';
 import 'package:restaurant_recommendation/src/widgets/sliver_fab_modified.dart';
 
 import 'widgets/empty_list.dart';
@@ -50,57 +51,59 @@ class _RestaurantPageState extends State<RestaurantPage> {
   StreamSubscription<QuerySnapshot>? _currentReviewSubscription;
   StreamSubscription<DocumentSnapshot>? _restaurantSubscription;
   Restaurant? _restaurant;
-  String? _userId;
-  String? _userName;
   List<Review> _reviews = <Review>[];
   bool isLoadingReviews = true;
+
+  late StreamSubscription<User?> _userSubscription;
+  User? _user;
+  String restaurantId = '';
 
   @override
   void initState() {
     super.initState();
-    String id = '';
     if (widget.restaurant != null) {
-      id = widget.restaurant!.id!;
+      restaurantId = widget.restaurant!.id!;
       _restaurant = widget.restaurant;
     } else
-      id = widget.id!;
+      restaurantId = widget.id!;
 
-    FirebaseAuth.instance
-        .signInAnonymously()
-        .then((UserCredential userCredential) {
-      data.getRestaurant(id).then((Restaurant restaurant) {
-        setState(() {
-          if (userCredential.user!.displayName == null ||
-              userCredential.user!.displayName!.isEmpty) {
-            _userName = 'Anonymous (${kIsWeb ? "Web" : "Mobile"})';
-          } else {
-            _userName = userCredential.user!.displayName;
-          }
-          _restaurant = restaurant;
-          _userId = userCredential.user!.uid;
+    _user = FirebaseAuth.instance.currentUser;
 
-          // Initialize the restaurant snapshot...
-          _restaurantSubscription = _restaurant!.reference!
-              .snapshots()
-              .listen((DocumentSnapshot restaurant) {
-            setState(() {
-              _restaurant = Restaurant.fromSnapshot(restaurant);
-            });
+    _userSubscription = FirebaseAuth.instance.userChanges().listen((user) {
+      _user = user;
+
+      if (user != null) {
+        getRestaurant();
+      }
+    });
+  }
+
+  getRestaurant() {
+    data.getRestaurant(restaurantId).then((Restaurant restaurant) {
+      setState(() {
+        _restaurant = restaurant;
+
+        // Initialize the restaurant snapshot...
+        _restaurantSubscription = _restaurant!.reference!
+            .snapshots()
+            .listen((DocumentSnapshot restaurant) {
+          setState(() {
+            _restaurant = Restaurant.fromSnapshot(restaurant);
           });
+        });
 
-          // Initialize the reviews snapshot...
-          _currentReviewSubscription = _restaurant!.reference!
-              .collection('ratings')
-              .orderBy('timestamp', descending: true)
-              .snapshots()
-              .listen((QuerySnapshot reviewSnap) {
-            _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
-              return Review.fromSnapshot(doc);
-            }).toList();
+        // Initialize the reviews snapshot...
+        _currentReviewSubscription = _restaurant!.reference!
+            .collection('ratings')
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+            .listen((QuerySnapshot reviewSnap) {
+          _reviews = reviewSnap.docs.map((DocumentSnapshot doc) {
+            return Review.fromSnapshot(doc);
+          }).toList();
 
-            setState(() {
-              isLoadingReviews = false;
-            });
+          setState(() {
+            isLoadingReviews = false;
           });
         });
       });
@@ -111,6 +114,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
   void dispose() {
     _currentReviewSubscription?.cancel();
     _restaurantSubscription?.cancel();
+    _userSubscription.cancel();
     super.dispose();
   }
 
@@ -118,8 +122,8 @@ class _RestaurantPageState extends State<RestaurantPage> {
     final newReview = await showDialog<Review>(
       context: context,
       builder: (_) => ReviewCreateDialog(
-        userId: _userId!,
-        userName: _userName!,
+        userId: _user!.uid,
+        userName: _user!.email!,
       ),
     );
     if (newReview != null) {
@@ -133,6 +137,21 @@ class _RestaurantPageState extends State<RestaurantPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_user == null) {
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        Navigator.pushNamed(
+          context,
+          HomePage.route,
+        );
+      });
+      return Scaffold(
+        body: Container(
+          child: Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
+      );
+    }
     return Scaffold(
       body: SliverFabModified(
         floatingWidget: FloatingActionButton(

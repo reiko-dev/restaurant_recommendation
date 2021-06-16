@@ -20,6 +20,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_recommendation/src/restaurant_page.dart';
+import 'package:restaurant_recommendation/src/widgets/auth_form.dart';
 
 import 'model/data.dart' as data;
 import 'model/filter.dart';
@@ -39,36 +40,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  _HomePageState() {
-    FirebaseAuth.instance
-        .signInAnonymously()
-        .then((UserCredential userCredential) {
-      _currentSubscription =
-          data.loadAllRestaurants().listen(_updateRestaurants);
-
-      if (userCredential.user!.displayName == null ||
-          userCredential.user!.displayName!.isEmpty) {
-        _userName = 'Anonymous (${kIsWeb ? "Web" : "Mobile"})';
-      } else {
-        _userName = userCredential.user!.displayName;
-      }
-      _userId = userCredential.user!.uid;
-    });
-  }
-
-  @override
-  void dispose() {
-    _currentSubscription?.cancel();
-    super.dispose();
-  }
+  //Verifies if there's a user authenticated if not show a sign-in/up form.
 
   StreamSubscription<QuerySnapshot>? _currentSubscription;
   bool _isLoading = true;
   List<Restaurant> _restaurants = <Restaurant>[];
   Filter? _filter;
 
-  String? _userName;
-  String? _userId;
+  User? _user;
+  late StreamSubscription<User?> _userChangesSubscription;
+
+  _HomePageState() {
+    _userChangesSubscription =
+        FirebaseAuth.instance.userChanges().listen((newUser) {
+      _user = newUser;
+
+      if (_user != null) {
+        _currentSubscription =
+            data.loadAllRestaurants().listen(_updateRestaurants);
+      }
+
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _currentSubscription?.cancel();
+    _userChangesSubscription.cancel();
+    super.dispose();
+  }
 
   void _updateRestaurants(QuerySnapshot snapshot) {
     setState(() {
@@ -84,8 +85,8 @@ class _HomePageState extends State<HomePage> {
 
     data.addRestaurantsBatch(
       restaurants,
-      _userName!,
-      _userId!,
+      _user!.email!,
+      _user!.uid,
     );
   }
 
@@ -125,37 +126,41 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size(320, 48),
           child: Padding(
             padding: EdgeInsets.fromLTRB(6, 0, 6, 4),
-            child: FilterBar(
-              filter: _filter,
-              onPressed: _onFilterBarPressed,
-            ),
+            child: _user != null
+                ? FilterBar(
+                    filter: _filter,
+                    onPressed: _onFilterBarPressed,
+                  )
+                : SizedBox.shrink(),
           ),
         ),
       ),
       body: Center(
-        child: Container(
-          constraints: BoxConstraints(maxWidth: 1280),
-          child: _isLoading
-              ? CircularProgressIndicator()
-              : _restaurants.isNotEmpty
-                  ? RestaurantGrid(
-                      restaurants: _restaurants,
-                      onRestaurantPressed: (restaurant) {
-                        /// TODO: Share the link of the restaurant through deep links on web
-                        ///
-                        Navigator.pushNamed(
-                          context,
-                          RestaurantPage.route,
-                          arguments:
-                              RestaurantPageArguments(restaurant: restaurant),
-                        );
-                      },
-                    )
-                  : EmptyListView(
-                      child: Text('FriendlyEats has no restaurants yet!'),
-                      onPressed: _onAddRandomRestaurantsPressed,
-                    ),
-        ),
+        child: _user == null
+            ? AuthForm()
+            : Container(
+                constraints: BoxConstraints(maxWidth: 1280),
+                child: _isLoading
+                    ? CircularProgressIndicator()
+                    : _restaurants.isNotEmpty
+                        ? RestaurantGrid(
+                            restaurants: _restaurants,
+                            onRestaurantPressed: (restaurant) {
+                              /// TODO: Share the link of the restaurant through deep links on web
+                              ///
+                              Navigator.pushNamed(
+                                context,
+                                RestaurantPage.route,
+                                arguments: RestaurantPageArguments(
+                                    restaurant: restaurant),
+                              );
+                            },
+                          )
+                        : EmptyListView(
+                            child: Text('FriendlyEats has no restaurants yet!'),
+                            onPressed: _onAddRandomRestaurantsPressed,
+                          ),
+              ),
       ),
     );
   }

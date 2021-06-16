@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import '../model/restaurant.dart';
 import 'stars.dart';
 
-class RestaurantCard extends StatelessWidget {
+class RestaurantCard extends StatefulWidget {
   RestaurantCard({
     this.restaurant,
     required RestaurantPressedCallback onRestaurantPressed,
@@ -29,16 +29,22 @@ class RestaurantCard extends StatelessWidget {
   final RestaurantPressedCallback _onPressed;
 
   @override
+  _RestaurantCardState createState() => _RestaurantCardState();
+}
+
+class _RestaurantCardState extends State<RestaurantCard> {
+  //TODO: Listen to changes on the Restaurant doc to update it accordingly to changes on the firestore
+  //Because the stars are not getting updating when a new review is mode on a restaurant page.
+  @override
   Widget build(BuildContext context) {
     return Card(
         child: InkWell(
-      onTap: () => _onPressed(restaurant!),
+      onTap: () => widget._onPressed(widget.restaurant!),
       splashColor: Colors.blue.withAlpha(30),
       child: Container(
         height: 250,
         child: Column(
           children: <Widget>[
-            // TODO: Make this a Hero widget so we can transition to it?
             Expanded(
               child: LayoutBuilder(
                 builder: (con, bc) {
@@ -46,9 +52,9 @@ class RestaurantCard extends StatelessWidget {
                     width: bc.maxWidth,
                     height: bc.maxHeight,
                     child: Hero(
-                      tag: restaurant!.id!,
+                      tag: widget.restaurant!.id!,
                       child: Image.network(
-                        restaurant!.photo,
+                        widget.restaurant!.photo,
                         alignment: Alignment.centerLeft,
                         fit: BoxFit.cover,
                       ),
@@ -68,12 +74,12 @@ class RestaurantCard extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                         child: Text(
-                          restaurant!.name,
+                          widget.restaurant!.name,
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                       Text(
-                        '\$' * restaurant!.price,
+                        '\$' * widget.restaurant!.price,
                         style: Theme.of(context).textTheme.caption,
                       ),
                     ],
@@ -82,13 +88,13 @@ class RestaurantCard extends StatelessWidget {
                     padding: EdgeInsets.fromLTRB(0, (kIsWeb ? 0 : 2), 0, 4),
                     alignment: Alignment.bottomLeft,
                     child: StarRating(
-                      rating: restaurant!.avgRating,
+                      rating: widget.restaurant!.avgRating,
                     ),
                   ),
                   Container(
                     alignment: Alignment.bottomLeft,
                     child: Text(
-                      '${restaurant!.category} ● ${restaurant!.city}',
+                      '${widget.restaurant!.category} ● ${widget.restaurant!.city}',
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
